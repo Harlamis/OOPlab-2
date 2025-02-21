@@ -3,7 +3,7 @@
 
 class GameObject {
 private:
-	std::string Name;
+	std::string name;
 	int mass;
 	int position;
 public:
@@ -19,9 +19,10 @@ public:
 			obj2.position--;
 		}
 	};
-	GameObject() {};
-	GameObject(std::string new_name, int new_mass) {};
-	GameObject(std::string new_name, int new_mass, int new_position) {};
-	~GameObject() {};
+	GameObject();
+	GameObject(std::string);
+	GameObject(std::string new_name, int new_mass);
+	GameObject(std::string new_name, int new_mass, int new_position);
+	~GameObject();
 
 };
