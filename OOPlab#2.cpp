@@ -13,8 +13,6 @@ GameObject::~GameObject() {
 	std::cout << "Object deleted\n";
 }
 int main() {
-	GameObject helldiver = GameObject::GameObject()
-		: name{ "John Helldiver" }, position{ 25 } {
-	};
+GameObject helldiver = GameObject::GameObject("John Helldiver", 1000);
 		return 0;
 }
