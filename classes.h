@@ -19,6 +19,9 @@ public:
 			obj2.position--;
 		}
 	};
-
+	GameObject() {};
+	GameObject(std::string new_name, int new_mass) {};
+	GameObject(std::string new_name, int new_mass, int new_position) {};
+	~GameObject() {};
 
 };
