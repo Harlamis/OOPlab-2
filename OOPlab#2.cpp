@@ -15,6 +15,10 @@ void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
 	}
 };
 
+void GameObject::Move(GameObject obj, int distance) {
+	obj.position += distance;
+}
+
 GameObject::GameObject()
 	:name{ "None" }, mass{ 0 }, position{ 0 }{ }
 GameObject::GameObject(std::string new_name)
@@ -26,6 +30,21 @@ GameObject::GameObject(std::string new_name, int new_mass, int new_position)
 GameObject::~GameObject() {
 	std::cout << "Object deleted\n";
 }
+void Character::ChangeHp(int damage, Character& character) {
+	character.hp -= damage;
+};
+Character::Character()
+	:name{ "None"}, hp{0}, speed{0} { }
+Character::Character(std::string new_name)
+	:name{ new_name }, hp{ 0 }, speed{ 0 } {
+}
+Character::Character(std::string new_name, int  new_hp)
+	:name{ new_name }, hp{ new_hp }, speed{ 0 } {
+}
+Character::Character(std::string new_name, int  new_hp, int new_speed)
+	:name{ new_name }, hp{ new_hp }, speed{ new_speed } {
+}
+Character::~Character() { std::cout << "Character deleted\n"; };
 int main() {
 	{
 GameObject helldiver = GameObject::GameObject("John Helldiver", 1000);
