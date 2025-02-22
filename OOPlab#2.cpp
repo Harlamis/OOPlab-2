@@ -34,17 +34,42 @@ void Character::ChangeHp(int damage, Character& character) {
 	character.hp -= damage;
 };
 Character::Character()
-	:name{ "None"}, hp{0}, speed{0} { }
+	:name{ "None" }, hp{ 0 }, speed{ 0 }, position{0} {
+}
 Character::Character(std::string new_name)
-	:name{ new_name }, hp{ 0 }, speed{ 0 } {
+	:name{ new_name }, hp{ 0 }, speed{ 0 }, position{ 0 } {
 }
 Character::Character(std::string new_name, int  new_hp)
-	:name{ new_name }, hp{ new_hp }, speed{ 0 } {
+	:name{ new_name }, hp{ new_hp }, speed{ 0 }, position{ 0 } {
 }
 Character::Character(std::string new_name, int  new_hp, int new_speed)
-	:name{ new_name }, hp{ new_hp }, speed{ new_speed } {
+	:name{ new_name }, hp{ new_hp }, speed{ new_speed }, position{ 0 } {
+}
+Character::Character(std::string new_name, int  new_hp, int new_speed, int new_position)
+	:name{ new_name }, hp{ new_hp }, speed{ new_speed }, position{new_position} {
 }
 Character::~Character() { std::cout << "Character deleted\n"; };
+
+void Character::Move(Character dude, int steps) {
+	for (int i = 0; i < steps; i++) {
+		dude.position += dude.speed;
+	};
+}
+Weapon::Weapon()
+	:name{ "None"}, damage{0}, durability{0} {
+}
+Weapon::Weapon(std::string new_name)
+	:name{ new_name }, damage{ 0 }, durability{ 0 } {
+}
+Weapon::Weapon(std::string new_name, int new_damage)
+	:name{ new_name }, damage{ new_damage }, durability{ 0 } {
+}
+Weapon::Weapon(std::string new_name, int new_damage, double new_durability)
+	:name{new_name}, damage{new_damage},durability{new_durability} { }
+
+Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
+
+
 int main() {
 	{
 GameObject helldiver = GameObject::GameObject("John Helldiver", 1000);
