@@ -15,8 +15,8 @@ void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
 	}
 };
 
-void GameObject::Move(GameObject obj, int distance) {
-	obj.position += distance;
+void GameObject::Move( int distance) {
+	this->position += distance;
 }
 
 GameObject::GameObject()
@@ -30,8 +30,8 @@ GameObject::GameObject(std::string new_name, int new_mass, int new_position)
 GameObject::~GameObject() {
 	std::cout << "Object deleted\n";
 }
-void Character::ChangeHp(int damage, Character& character) {
-	character.hp -= damage;
+void Character::ChangeHp(int damage) {
+	this->hp -= damage;
 };
 Character::Character()
 	:name{ "None" }, hp{ 0 }, speed{ 0 }, position{0} {
@@ -50,9 +50,9 @@ Character::Character(std::string new_name, int  new_hp, int new_speed, int new_p
 }
 Character::~Character() { std::cout << "Character deleted\n"; };
 
-void Character::Move(Character dude, int steps) {
+void Character::Move(int steps) {
 	for (int i = 0; i < steps; i++) {
-		dude.position += dude.speed;
+		this->position += this->speed;
 	};
 }
 Weapon::Weapon()
@@ -68,6 +68,11 @@ Weapon::Weapon(std::string new_name, int new_damage, double new_durability)
 	:name{new_name}, damage{new_damage},durability{new_durability} { }
 
 Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
+
+ void Weapon::Attack(Character& target) {
+	 this->durability -= double((this->damage) / 20);
+	 target.ChangeHp(this->damage);
+}
 
 
 int main() {
