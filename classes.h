@@ -3,7 +3,7 @@
 
 class GameObject {
 private:
-	std::string name;
+	std::string name; //hello
 	int mass;
 	int position;
 public:
