@@ -7,9 +7,9 @@ private:
 	int mass;
 	int position;
 public:
-	void Move(GameObject obj, int distance);
+	void Move(int distance);
 	void Collide(GameObject& obj1, GameObject& obj2);
-	std::string GetName(GameObject& obj) { return obj.name; };
+	std::string GetName() { return this->name; };
 	GameObject();
 	GameObject(std::string new_name);
 	GameObject(std::string new_name, int new_mass);
@@ -25,9 +25,9 @@ private:
 	int speed;
 	int position;
 public:
-	std::string GetName(Character character) { return character.name; };
-	void Move(Character dude, int steps);
-	void ChangeHp(int damage, Character &character);
+	std::string GetName() { return this->name; };
+	void Move(int steps);
+	void ChangeHp(int damage);
 	Character();
 	Character(std::string new_name);
 	Character(std::string new_name, int  new_hp);
@@ -43,8 +43,8 @@ private:
 	int damage;
 	double durability;
 public:
-	std::string GetName(Weapon& weapon) { return weapon.name; };
-	void Attack(Character& target, Weapon weapon);
+	std::string GetName() { return this->name; };
+	void Attack(Character& target);
 	Weapon();
 	Weapon(std::string new_name);
 	Weapon(std::string new_name, int  new_damage);
