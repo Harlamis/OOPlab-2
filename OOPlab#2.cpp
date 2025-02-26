@@ -76,8 +76,15 @@ Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
 
 
 int main() {
-	{
-GameObject helldiver = GameObject::GameObject("John Helldiver", 1000);
-	}
+	
+		GameObject rock = GameObject("stone");
+		std::cout << rock.GetName();
+		Character guy = Character("John", 35, 30, 10);
+		guy.Move(3);
+		Weapon sword = Weapon("Sword", 15);
+		sword.Attack(guy);
+
+		int x = 1;
+	
 		return 0;
 }
