@@ -55,6 +55,13 @@ Character::Character(std::string new_name, int  new_hp, int new_speed, int new_p
 }
 Character::~Character() { std::cout << "Character deleted\n"; };
 
+int Character::deathsCount = 0;
+
+Character::Character(const Character& origin) :name{ origin.name }, hp{ origin.hp }, speed{ origin.speed }, position{ origin.position } {
+	std::cout << "\nCopied\n";
+	deathsCount++;
+}
+
 void Character::Move(int steps) {
 	for (int i = 0; i < steps; i++) {
 		this->position += this->speed;
@@ -74,9 +81,14 @@ Weapon::Weapon(std::string new_name, int new_damage, double new_durability)
 
 Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
 
+Weapon::Weapon(const Weapon& origin) :name{ origin.name }, damage{ origin.damage }, durability{ origin.durability }{
+	std::cout << "\n Copied\n";
+}
+
  void Weapon::Attack(Character& target) {
 	 this->durability -= double((this->damage) / 20);
 	 target.ChangeHp(this->damage);
+
 }
 
 
@@ -93,6 +105,6 @@ std::cout << "\nPause\n";
 		guy.Move(3);
 		Weapon sword = Weapon("Sword", 15);
 		sword.Attack(guy);
-	
+		std::cout << "\nnumber of deaths: " << Character::getDeathsCount() << endl;
 		return 0;
 }

@@ -21,11 +21,13 @@ public:
 
 class Character {
 private:
+	static int deathsCount;
 	std::string name;
 	int hp;
 	int speed;
 	int position;
 public:
+	static int getDeathsCount() { return deathsCount; };
 	std::string GetName() { return this->name; };
 	void Move(int steps);
 	void ChangeHp(int damage);
@@ -34,6 +36,7 @@ public:
 	Character(std::string new_name, int  new_hp);
 	Character(std::string new_name, int  new_hp, int new_speed);
 	Character(std::string new_name, int  new_hp, int new_speed, int new_position);
+	Character(const Character& origin);
 	~Character();
 
 };
@@ -50,6 +53,7 @@ public:
 	Weapon(std::string new_name);
 	Weapon(std::string new_name, int  new_damage);
 	Weapon(std::string new_name, int  new_damage, double durability);
+	Weapon(const Weapon& origin);
 	~Weapon();
 };
 
