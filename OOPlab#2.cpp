@@ -30,6 +30,11 @@ GameObject::GameObject(std::string new_name, int new_mass, int new_position)
 GameObject::~GameObject() {
 	std::cout << "Object deleted\n";
 }
+
+GameObject::GameObject(const GameObject& origin) :name{ origin.name }, mass{ origin.mass }, position{ origin.position } {
+	std::cout << "Copied\n";
+}
+
 void Character::ChangeHp(int damage) {
 	this->hp -= damage;
 };
@@ -76,8 +81,10 @@ Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
 
 
 int main() {
-	{
+	
 GameObject helldiver = GameObject::GameObject("John Helldiver", 1000);
-	}
+GameObject newHelldiver = GameObject::GameObject(helldiver);
+std::cout << "\nPause\n";
+
 		return 0;
 }
