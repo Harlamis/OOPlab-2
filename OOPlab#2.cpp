@@ -31,9 +31,15 @@ GameObject::~GameObject() {
 	std::cout << "Object deleted\n";
 }
 
+GameObject::GameObject(GameObject&& origin) noexcept :name{ std::move(origin.name) }, mass{ origin.mass }, position{ origin.position } {
+	origin.mass = 0;
+	origin.position = 0;
+};
+
 GameObject::GameObject(const GameObject& origin) :name{ origin.name }, mass{ origin.mass }, position{ origin.position } {
 	std::cout << "Copied\n";
 }
+
 
 void Character::ChangeHp(int damage) {
 	this->hp -= damage;
