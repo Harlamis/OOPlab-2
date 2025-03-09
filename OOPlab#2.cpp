@@ -40,6 +40,13 @@ GameObject::GameObject(const GameObject& origin) :name{ origin.name }, mass{ ori
 	std::cout << "Copied\n";
 }
 
+bool GameObject::operator==(const GameObject& rhs) {
+	if ((this->name == rhs.name) && (this->mass == rhs.mass) && (this->position == rhs.position)) {
+		return true;
+	}
+	return false;
+}
+
 
 void Character::ChangeHp(int damage) {
 	this->hp -= damage;
@@ -73,6 +80,24 @@ void Character::Move(int steps) {
 		this->position += this->speed;
 	};
 }
+
+ std::ostream& operator<<(std::ostream& output, const Character& chr) {
+	output << "Character: " << chr.name << ", HP: " << chr.hp << ", Speed: " << chr.speed << ", Position: " << chr.position;
+	return output;
+};
+
+ std::istream& operator>>(std::istream& input, Character& chr) {
+	 std::cout << "Enter name: ";
+	 input >> chr.name;
+	 std::cout << "Enter HP: ";
+	 input >> chr.hp;
+	 std::cout << "Enter speed: ";
+	 input >> chr.speed;
+	 std::cout << "Enter position: ";
+	 input >> chr.position;
+	 return input;
+ };
+
 Weapon::Weapon()
 	:name{ "None"}, damage{0}, durability{0} {
 }

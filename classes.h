@@ -9,6 +9,7 @@ private:
 public:
 	void Move(int distance);
 	void Collide(GameObject& obj1, GameObject& obj2);
+	bool operator==(const GameObject& rhs);
 	std::string GetName() { return this->name; };
 	GameObject();
 	GameObject(std::string new_name);
@@ -17,6 +18,7 @@ public:
 	GameObject(const GameObject& origin);
 	GameObject(GameObject&& origin) noexcept;
 	~GameObject();
+
 
 };
 
@@ -39,6 +41,8 @@ public:
 	Character(std::string new_name, int  new_hp, int new_speed, int new_position);
 	Character(const Character& origin);
 	~Character();
+	friend std::ostream& operator<<(std::ostream& output, const Character& chr);
+	friend std::istream& operator>>(std::istream& input, Character& chr);
 
 };
 
