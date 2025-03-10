@@ -116,6 +116,13 @@ Weapon::Weapon(const Weapon& origin) :name{ origin.name }, damage{ origin.damage
 	std::cout << "\n Copied\n";
 }
 
+Weapon& Weapon::operator--() {
+	if (durability > 0) {
+		--durability;
+	}
+	return *this;
+};
+
  void Weapon::Attack(Character& target) {
 	 this->durability -= double((this->damage) / 20);
 	 target.ChangeHp(this->damage);

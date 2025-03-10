@@ -52,6 +52,7 @@ private:
 	int damage;
 	double durability;
 public:
+	Weapon& operator--();
 	std::string GetName() { return this->name; };
 	void Attack(Character& target);
 	Weapon();
