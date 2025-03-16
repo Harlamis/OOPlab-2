@@ -133,23 +133,37 @@ void Character::Move(int steps) {
 	 return input;
  };
 
-Weapon::Weapon()
-	:name{ "None"}, damage{0}, durability{0} {
-}
-Weapon::Weapon(std::string new_name)
-	:name{ new_name }, damage{ 0 }, durability{ 0 } {
-}
-Weapon::Weapon(std::string new_name, int new_damage)
-	:name{ new_name }, damage{ new_damage }, durability{ 0 } {
-}
-Weapon::Weapon(std::string new_name, int new_damage, double new_durability)
-	:name{new_name}, damage{new_damage},durability{new_durability} { }
+ Weapon::Weapon()
+	 : GameObject(), name{ "Unknown" }, damage{ 0 }, durability{ 100.0 } {
+ }
+
+ Weapon::Weapon(std::string new_name)
+	 : GameObject(), name{ std::move(new_name) }, damage{ 0 }, durability{ 100.0 } {
+ }
+
+ Weapon::Weapon(std::string new_name, int new_damage)
+	 : GameObject(), name{ std::move(new_name) }, damage{ new_damage }, durability{ 100.0 } {
+ }
+
+ Weapon::Weapon(std::string new_name, int new_damage, double new_durability)
+	 : GameObject(), name{ std::move(new_name) }, damage{ new_damage }, durability{ new_durability } {
+ }
+
+ Weapon::Weapon(std::string new_name, int new_damage, double new_durability, int new_mass)
+	 : GameObject(new_mass), name{ std::move(new_name) }, damage{ new_damage }, durability{ new_durability } {
+ }
+
+ Weapon::Weapon(std::string new_name, int new_damage, double new_durability, int new_mass, int new_position)
+	 : GameObject(new_mass, new_position), name{ std::move(new_name) }, damage{ new_damage }, durability{ new_durability } {
+ }
+
+ Weapon::Weapon(const Weapon& origin)
+	 : GameObject(origin), name{ origin.name }, damage{ origin.damage }, durability{ origin.durability } {
+ }
+
 
 Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
 
-Weapon::Weapon(const Weapon& origin) :name{ origin.name }, damage{ origin.damage }, durability{ origin.durability }{
-	std::cout << "\n Copied\n";
-}
 
  void RangedWeapon::Shoot(Character& chr) {
 	 if (this->capacity == 0) {
@@ -164,6 +178,29 @@ Weapon::Weapon(const Weapon& origin) :name{ origin.name }, damage{ origin.damage
 
  void RangedWeapon::Reload(int ammo) {
 	 this->capacity = ammo;
+ }
+
+ RangedWeapon::RangedWeapon()
+	 : Weapon(), range{ 0 }, capacity{ 0 } {
+ }
+
+ RangedWeapon::RangedWeapon(std::string new_name)
+	 : Weapon(new_name), range{ 0 }, capacity{ 0 } {
+ }
+
+ RangedWeapon::RangedWeapon(std::string new_name, int new_damage)
+	 : Weapon(new_name, new_damage), range{ 0 }, capacity{ 0 } {
+ }
+
+ RangedWeapon::RangedWeapon(std::string new_name, int new_damage, double new_durability)
+	 : Weapon(new_name, new_damage, new_durability), range{ 0 }, capacity{ 0 } {
+ }
+
+ RangedWeapon::RangedWeapon(std::string new_name, int new_damage, double new_durability, int new_range, int new_capacity)
+	 : Weapon(new_name, new_damage, new_durability), range{ new_range }, capacity{ new_capacity } {
+ }
+
+ RangedWeapon::~RangedWeapon() {
  }
 
 

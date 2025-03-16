@@ -63,6 +63,8 @@ public:
 	Weapon(std::string new_name);
 	Weapon(std::string new_name, int  new_damage);
 	Weapon(std::string new_name, int  new_damage, double durability);
+	Weapon(std::string new_name, int new_damage, double new_durability, int new_mass);
+	Weapon(std::string new_name, int new_damage, double new_durability, int new_mass, int new_position);
 	Weapon(const Weapon& origin);
 	~Weapon();
 };
@@ -74,6 +76,11 @@ private:
 public:
 	void Shoot(Character& chr);
 	void Reload(int ammo);
-
+	RangedWeapon();
+	RangedWeapon(std::string new_name);
+	RangedWeapon(std::string new_name, int new_damage);
+	RangedWeapon(std::string new_name, int new_damage, double new_durability);
+	RangedWeapon(std::string new_name, int new_damage, double new_durability, int new_range, int new_capacity);
+	~RangedWeapon();
 };
 
