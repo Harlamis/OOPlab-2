@@ -50,25 +50,22 @@ void Character::ChangeHp(int damage) {
 	this->hp -= damage;
 };
 Character::Character()
-	:name{ "None" }, hp{ 0 }, speed{ 0 }, position{0} {
+	:name{ "None" }, hp{ 0 }, speed{ 0 } {
 }
 Character::Character(std::string new_name)
-	:name{ new_name }, hp{ 0 }, speed{ 0 }, position{ 0 } {
+	:name{ new_name }, hp{ 0 }, speed{ 0 } {
 }
 Character::Character(std::string new_name, int  new_hp)
-	:name{ new_name }, hp{ new_hp }, speed{ 0 }, position{ 0 } {
+	:name{ new_name }, hp{ new_hp }, speed{ 0 } {
 }
 Character::Character(std::string new_name, int  new_hp, int new_speed)
-	:name{ new_name }, hp{ new_hp }, speed{ new_speed }, position{ 0 } {
-}
-Character::Character(std::string new_name, int  new_hp, int new_speed, int new_position)
-	:name{ new_name }, hp{ new_hp }, speed{ new_speed }, position{new_position} {
+	:name{ new_name }, hp{ new_hp }, speed{ new_speed } {
 }
 Character::~Character() { std::cout << "Character deleted\n"; };
 
 int Character::deathsCount = 0;
 
-Character::Character(const Character& origin) :name{ origin.name }, hp{ origin.hp }, speed{ origin.speed }, position{ origin.position } {
+Character::Character(const Character& origin) :name{ origin.name }, hp{ origin.hp }, speed{ origin.speed } {
 	std::cout << "\nCopied\n";
 	deathsCount++;
 }
@@ -82,7 +79,7 @@ void Character::Move(int steps) {
 }
 
  std::ostream& operator<<(std::ostream& output, const Character& chr) {
-	output << "Character: " << chr.name << ", HP: " << chr.hp << ", Speed: " << chr.speed << ", Position: " << chr.position;
+	output << "Character: " << chr.name << ", HP: " << chr.hp << ", Speed: " << chr.speed << ", Position: \n ";
 	return output;
 };
 
