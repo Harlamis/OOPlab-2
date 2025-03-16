@@ -36,8 +36,11 @@ public:
 	Character(std::string new_name);
 	Character(std::string new_name, int  new_hp);
 	Character(std::string new_name, int  new_hp, int new_speed);
+	Character(std::string new_name, int new_hp, int new_speed, int new_mass);
+	Character(std::string new_name, int new_hp, int new_speed, int new_mass, int new_position);
+	Character(Character&& origin) noexcept;
 	Character(const Character& origin);
-	~Character();
+	~Character() ;
 	friend std::ostream& operator<<(std::ostream& output, const Character& chr);
 	friend std::istream& operator>>(std::istream& input, Character& chr);
 

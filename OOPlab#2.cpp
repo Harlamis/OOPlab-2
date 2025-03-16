@@ -50,25 +50,45 @@ void Character::ChangeHp(int damage) {
 	this->hp -= damage;
 };
 Character::Character()
-	:name{ "None" }, hp{ 0 }, speed{ 0 } {
+	: GameObject(), name("Unnamed"), hp(100), speed(1) {
 }
+
 Character::Character(std::string new_name)
-	:name{ new_name }, hp{ 0 }, speed{ 0 } {
+	: GameObject(), name{std::move(new_name)}, hp{100}, speed{1} {
 }
-Character::Character(std::string new_name, int  new_hp)
-	:name{ new_name }, hp{ new_hp }, speed{ 0 } {
+
+Character::Character(std::string new_name, int new_hp)
+	: GameObject(), name{ std::move(new_name) }, hp{new_hp}, speed{1} {
 }
-Character::Character(std::string new_name, int  new_hp, int new_speed)
-	:name{ new_name }, hp{ new_hp }, speed{ new_speed } {
+
+Character::Character(std::string new_name, int new_hp, int new_speed)
+	: GameObject(), name{ std::move(new_name) }, hp{new_hp}, speed{new_speed} {
 }
-Character::~Character() { std::cout << "Character deleted\n"; };
+
+Character::Character(std::string new_name, int new_hp, int new_speed, int new_mass)
+	: GameObject(new_mass), name{std::move(new_name)}, hp(new_hp), speed{new_speed} {
+}
+
+Character::Character(std::string new_name, int new_hp, int new_speed, int new_mass, int new_position)
+	: GameObject(new_mass, new_position), name{ std::move(new_name) }, hp{ new_hp }, speed{ new_speed } {
+}
+
+Character::Character(const Character& origin)
+	: GameObject(origin), name{ origin.name }, hp{ origin.hp }, speed{ origin.speed } {
+}
 
 int Character::deathsCount = 0;
 
-Character::Character(const Character& origin) :name{ origin.name }, hp{ origin.hp }, speed{ origin.speed } {
-	std::cout << "\nCopied\n";
-	deathsCount++;
+Character::Character(Character&& origin) noexcept
+	: GameObject(std::move(origin)), name(std::move(origin.name)), hp(origin.hp), speed(origin.speed) {
+	origin.hp = 0;
+	origin.speed = 0;
 }
+
+Character::~Character() { 
+	std::cout << "Character deleted\n"; 
+	deathsCount++;
+};
 
 void Character::Move(int steps) {
 	for (int i = 0; i < steps; i++) {
