@@ -8,6 +8,7 @@ private:
 public:
 	void Drag(int distance);
 	void Collide(GameObject& obj1, GameObject& obj2);
+	GameObject &operator=(const GameObject& rhs);
 	bool operator==(const GameObject& rhs);;
 	int GetPosition() { return this->position; }
 	void SetPosition(int pos) { this->position = pos; }
@@ -17,6 +18,7 @@ public:
 	GameObject(const GameObject& origin);
 	GameObject(GameObject&& origin) noexcept;
 	~GameObject();
+
 
 
 };
@@ -32,6 +34,7 @@ public:
 	std::string GetName() { return this->name; };
 	void Move(int steps);
 	void ChangeHp(int damage);
+	Character &operator=(const Character& rhs);
 	Character();
 	Character(std::string new_name);
 	Character(std::string new_name, int  new_hp);

@@ -38,6 +38,14 @@ GameObject::GameObject(const GameObject& origin) : mass{ origin.mass }, position
 	std::cout << "Copied\n";
 }
 
+GameObject& GameObject::operator=(const GameObject& rhs) {
+	if (this != &rhs) {
+		mass = rhs.mass;
+		position = rhs.position;
+	}
+	return *this;
+};
+
 bool GameObject::operator==(const GameObject& rhs) {
 	if ((this->mass == rhs.mass) && (this->position == rhs.position)) {
 		return true;
@@ -49,6 +57,17 @@ bool GameObject::operator==(const GameObject& rhs) {
 void Character::ChangeHp(int damage) {
 	this->hp -= damage;
 };
+
+Character& Character::operator=(const Character& rhs) {
+	if (this != &rhs) {
+		GameObject::operator=(rhs);
+		name = rhs.name;
+		hp = rhs.hp;
+		speed = rhs.speed;
+	}
+	return *this;
+};
+
 Character::Character()
 	: GameObject(), name("Unnamed"), hp(100), speed(1) {
 }
