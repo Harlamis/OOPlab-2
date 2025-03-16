@@ -15,33 +15,31 @@ void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
 	}
 };
 
-void GameObject::Move( int distance) {
+void GameObject::Drag(int distance) {
 	this->position += distance;
-}
+};
 
 GameObject::GameObject()
-	:name{ "None" }, mass{ 0 }, position{ 0 }{ }
-GameObject::GameObject(std::string new_name)
-	:name{ new_name }, mass{ 0 }, position{ 0 } {}
-GameObject::GameObject(std::string new_name, int new_mass)
-	:name{ new_name }, mass{ new_mass }, position{ 0 } {}
-GameObject::GameObject(std::string new_name, int new_mass, int new_position)
-	:name{ new_name }, mass{ new_mass }, position{ new_position } {}
+	: mass{ 0 }, position{ 0 }{ }
+GameObject::GameObject(int new_mass)
+	: mass{ new_mass }, position{ 0 } {}
+GameObject::GameObject(int new_mass, int new_position)
+	: mass{ new_mass }, position{ new_position } {}
 GameObject::~GameObject() {
 	std::cout << "Object deleted\n";
 }
 
-GameObject::GameObject(GameObject&& origin) noexcept :name{ std::move(origin.name) }, mass{ origin.mass }, position{ origin.position } {
+GameObject::GameObject(GameObject&& origin) noexcept :  mass{ origin.mass }, position{ origin.position } {
 	origin.mass = 0;
 	origin.position = 0;
 };
 
-GameObject::GameObject(const GameObject& origin) :name{ origin.name }, mass{ origin.mass }, position{ origin.position } {
+GameObject::GameObject(const GameObject& origin) : mass{ origin.mass }, position{ origin.position } {
 	std::cout << "Copied\n";
 }
 
 bool GameObject::operator==(const GameObject& rhs) {
-	if ((this->name == rhs.name) && (this->mass == rhs.mass) && (this->position == rhs.position)) {
+	if ((this->mass == rhs.mass) && (this->position == rhs.position)) {
 		return true;
 	}
 	return false;

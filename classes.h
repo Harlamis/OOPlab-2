@@ -3,18 +3,15 @@
 
 class GameObject {
 private:
-	std::string name; //hello
 	int mass;
 	int position;
 public:
-	void Move(int distance);
+	void Drag(int distance);
 	void Collide(GameObject& obj1, GameObject& obj2);
-	bool operator==(const GameObject& rhs);
-	std::string GetName() { return this->name; };
+	bool operator==(const GameObject& rhs);;
 	GameObject();
-	GameObject(std::string new_name);
-	GameObject(std::string new_name, int new_mass);
-	GameObject(std::string new_name, int new_mass, int new_position);
+	GameObject(int new_mass);
+	GameObject(int new_mass, int new_position);
 	GameObject(const GameObject& origin);
 	GameObject(GameObject&& origin) noexcept;
 	~GameObject();
@@ -22,7 +19,7 @@ public:
 
 };
 
-class Character {
+class Character : public GameObject {
 private:
 	static int deathsCount;
 	std::string name;
@@ -46,7 +43,7 @@ public:
 
 };
 
-class Weapon {
+class Weapon : public GameObject {
 private:
 	std::string name;
 	int damage;
