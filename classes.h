@@ -9,6 +9,8 @@ public:
 	void Drag(int distance);
 	void Collide(GameObject& obj1, GameObject& obj2);
 	bool operator==(const GameObject& rhs);;
+	int GetPosition() { return this->position; }
+	void SetPosition(int pos) { this->position = pos; }
 	GameObject();
 	GameObject(int new_mass);
 	GameObject(int new_mass, int new_position);
@@ -25,7 +27,6 @@ private:
 	std::string name;
 	int hp;
 	int speed;
-	int position;
 public:
 	static int getDeathsCount() { return deathsCount; };
 	std::string GetName() { return this->name; };
@@ -35,7 +36,6 @@ public:
 	Character(std::string new_name);
 	Character(std::string new_name, int  new_hp);
 	Character(std::string new_name, int  new_hp, int new_speed);
-	Character(std::string new_name, int  new_hp, int new_speed, int new_position);
 	Character(const Character& origin);
 	~Character();
 	friend std::ostream& operator<<(std::ostream& output, const Character& chr);
@@ -49,6 +49,7 @@ private:
 	int damage;
 	double durability;
 public:
+	int GetDamage() { return this->damage; };
 	Weapon& operator--();
 	std::string GetName() { return this->name; };
 	void Attack(Character& target);
@@ -58,5 +59,15 @@ public:
 	Weapon(std::string new_name, int  new_damage, double durability);
 	Weapon(const Weapon& origin);
 	~Weapon();
+};
+
+class RangedWeapon : public Weapon {
+private:
+	int range;
+	int capacity;
+public:
+	void Shoot(Character& chr);
+	void Reload(int ammo);
+
 };
 

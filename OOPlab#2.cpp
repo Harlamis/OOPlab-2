@@ -75,7 +75,9 @@ Character::Character(const Character& origin) :name{ origin.name }, hp{ origin.h
 
 void Character::Move(int steps) {
 	for (int i = 0; i < steps; i++) {
-		this->position += this->speed;
+		int currentPos = this->GetPosition();
+		currentPos += this->speed;
+		SetPosition(currentPos);
 	};
 }
 
@@ -92,7 +94,6 @@ void Character::Move(int steps) {
 	 std::cout << "Enter speed: ";
 	 input >> chr.speed;
 	 std::cout << "Enter position: ";
-	 input >> chr.position;
 	 return input;
  };
 
@@ -114,6 +115,22 @@ Weapon::Weapon(const Weapon& origin) :name{ origin.name }, damage{ origin.damage
 	std::cout << "\n Copied\n";
 }
 
+ void RangedWeapon::Shoot(Character& chr) {
+	 if (this->capacity == 0) {
+		 return;
+	 }
+	 int currentTargetPos = chr.GetPosition();
+	 int currentShooterPos = this->GetPosition();
+	 if (this->range > (currentTargetPos - currentShooterPos)) {
+		 this->Attack(chr);
+	 }
+}
+
+ void RangedWeapon::Reload(int ammo) {
+	 this->capacity = ammo;
+ }
+
+
 Weapon& Weapon::operator--() {
 	if (durability > 0) {
 		--durability;
@@ -129,18 +146,7 @@ Weapon& Weapon::operator--() {
 
 
 int main() {
-	
-
-GameObject helldiver = GameObject::GameObject("John Helldiver", 1000);
-GameObject newHelldiver = GameObject::GameObject(helldiver);
-std::cout << "\nPause\n";
-
-		GameObject rock = GameObject("stone");
-		std::cout << rock.GetName();
-		Character guy = Character("John", 35, 30, 10);
-		guy.Move(3);
 		Weapon sword = Weapon("Sword", 15);
-		sword.Attack(guy);
 		std::cout << "\nnumber of deaths: " << Character::getDeathsCount() << endl;
 		return 0;
 }
