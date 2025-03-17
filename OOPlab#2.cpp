@@ -77,19 +77,19 @@ Character::Character(std::string new_name)
 }
 
 Character::Character(std::string new_name, int new_hp)
-	: GameObject(), name{ std::move(new_name) }, hp{new_hp}, speed{1} {
+	: GameObject(), name{new_name }, hp{new_hp}, speed{1} {
 }
 
 Character::Character(std::string new_name, int new_hp, int new_speed)
-	: GameObject(), name{ std::move(new_name) }, hp{new_hp}, speed{new_speed} {
+	: GameObject(), name{new_name }, hp{new_hp}, speed{new_speed} {
 }
 
 Character::Character(std::string new_name, int new_hp, int new_speed, int new_mass)
-	: GameObject(new_mass), name{std::move(new_name)}, hp(new_hp), speed{new_speed} {
+	: GameObject(new_mass), name{new_name}, hp(new_hp), speed{new_speed} {
 }
 
 Character::Character(std::string new_name, int new_hp, int new_speed, int new_mass, int new_position)
-	: GameObject(new_mass, new_position), name{ std::move(new_name) }, hp{ new_hp }, speed{ new_speed } {
+	: GameObject(new_mass, new_position), name{new_name }, hp{ new_hp }, speed{ new_speed } {
 }
 
 Character::Character(const Character& origin)
@@ -113,7 +113,7 @@ void Character::Move(int steps) {
 	for (int i = 0; i < steps; i++) {
 		int currentPos = this->GetPosition();
 		currentPos += this->speed;
-		SetPosition(currentPos);
+		Drag(currentPos);
 	};
 }
 

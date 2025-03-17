@@ -11,7 +11,6 @@ public:
 	GameObject &operator=(const GameObject& rhs);
 	bool operator==(const GameObject& rhs);;
 	int GetPosition() { return this->position; }
-	void SetPosition(int pos) { this->position = pos; }
 	GameObject();
 	GameObject(int new_mass);
 	GameObject(int new_mass, int new_position);
