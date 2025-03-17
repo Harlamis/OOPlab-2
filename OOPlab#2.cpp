@@ -15,33 +15,39 @@ void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
 	}
 };
 
-void GameObject::Move( int distance) {
+void GameObject::Drag(int distance) {
 	this->position += distance;
-}
+};
 
 GameObject::GameObject()
-	:name{ "None" }, mass{ 0 }, position{ 0 }{ }
-GameObject::GameObject(std::string new_name)
-	:name{ new_name }, mass{ 0 }, position{ 0 } {}
-GameObject::GameObject(std::string new_name, int new_mass)
-	:name{ new_name }, mass{ new_mass }, position{ 0 } {}
-GameObject::GameObject(std::string new_name, int new_mass, int new_position)
-	:name{ new_name }, mass{ new_mass }, position{ new_position } {}
+	: mass{ 0 }, position{ 0 }{ }
+GameObject::GameObject(int new_mass)
+	: mass{ new_mass }, position{ 0 } {}
+GameObject::GameObject(int new_mass, int new_position)
+	: mass{ new_mass }, position{ new_position } {}
 GameObject::~GameObject() {
 	std::cout << "Object deleted\n";
 }
 
-GameObject::GameObject(GameObject&& origin) noexcept :name{ std::move(origin.name) }, mass{ origin.mass }, position{ origin.position } {
+GameObject::GameObject(GameObject&& origin) noexcept :  mass{ origin.mass }, position{ origin.position } {
 	origin.mass = 0;
 	origin.position = 0;
 };
 
-GameObject::GameObject(const GameObject& origin) :name{ origin.name }, mass{ origin.mass }, position{ origin.position } {
+GameObject::GameObject(const GameObject& origin) : mass{ origin.mass }, position{ origin.position } {
 	std::cout << "Copied\n";
 }
 
+GameObject& GameObject::operator=(const GameObject& rhs) {
+	if (this != &rhs) {
+		mass = rhs.mass;
+		position = rhs.position;
+	}
+	return *this;
+};
+
 bool GameObject::operator==(const GameObject& rhs) {
-	if ((this->name == rhs.name) && (this->mass == rhs.mass) && (this->position == rhs.position)) {
+	if ((this->mass == rhs.mass) && (this->position == rhs.position)) {
 		return true;
 	}
 	return false;
@@ -51,38 +57,68 @@ bool GameObject::operator==(const GameObject& rhs) {
 void Character::ChangeHp(int damage) {
 	this->hp -= damage;
 };
+
+Character& Character::operator=(const Character& rhs) {
+	if (this != &rhs) {
+		GameObject::operator=(rhs);
+		name = rhs.name;
+		hp = rhs.hp;
+		speed = rhs.speed;
+	}
+	return *this;
+};
+
 Character::Character()
-	:name{ "None" }, hp{ 0 }, speed{ 0 }, position{0} {
+	: GameObject(), name("Unnamed"), hp(100), speed(1) {
 }
+
 Character::Character(std::string new_name)
-	:name{ new_name }, hp{ 0 }, speed{ 0 }, position{ 0 } {
+	: GameObject(), name{std::move(new_name)}, hp{100}, speed{1} {
 }
-Character::Character(std::string new_name, int  new_hp)
-	:name{ new_name }, hp{ new_hp }, speed{ 0 }, position{ 0 } {
+
+Character::Character(std::string new_name, int new_hp)
+	: GameObject(), name{ std::move(new_name) }, hp{new_hp}, speed{1} {
 }
-Character::Character(std::string new_name, int  new_hp, int new_speed)
-	:name{ new_name }, hp{ new_hp }, speed{ new_speed }, position{ 0 } {
+
+Character::Character(std::string new_name, int new_hp, int new_speed)
+	: GameObject(), name{ std::move(new_name) }, hp{new_hp}, speed{new_speed} {
 }
-Character::Character(std::string new_name, int  new_hp, int new_speed, int new_position)
-	:name{ new_name }, hp{ new_hp }, speed{ new_speed }, position{new_position} {
+
+Character::Character(std::string new_name, int new_hp, int new_speed, int new_mass)
+	: GameObject(new_mass), name{std::move(new_name)}, hp(new_hp), speed{new_speed} {
 }
-Character::~Character() { std::cout << "Character deleted\n"; };
+
+Character::Character(std::string new_name, int new_hp, int new_speed, int new_mass, int new_position)
+	: GameObject(new_mass, new_position), name{ std::move(new_name) }, hp{ new_hp }, speed{ new_speed } {
+}
+
+Character::Character(const Character& origin)
+	: GameObject(origin), name{ origin.name }, hp{ origin.hp }, speed{ origin.speed } {
+}
 
 int Character::deathsCount = 0;
 
-Character::Character(const Character& origin) :name{ origin.name }, hp{ origin.hp }, speed{ origin.speed }, position{ origin.position } {
-	std::cout << "\nCopied\n";
-	deathsCount++;
+Character::Character(Character&& origin) noexcept
+	: GameObject(std::move(origin)), name(std::move(origin.name)), hp(origin.hp), speed(origin.speed) {
+	origin.hp = 0;
+	origin.speed = 0;
 }
+
+Character::~Character() { 
+	std::cout << "Character deleted\n"; 
+	deathsCount++;
+};
 
 void Character::Move(int steps) {
 	for (int i = 0; i < steps; i++) {
-		this->position += this->speed;
+		int currentPos = this->GetPosition();
+		currentPos += this->speed;
+		SetPosition(currentPos);
 	};
 }
 
  std::ostream& operator<<(std::ostream& output, const Character& chr) {
-	output << "Character: " << chr.name << ", HP: " << chr.hp << ", Speed: " << chr.speed << ", Position: " << chr.position;
+	output << "Character: " << chr.name << ", HP: " << chr.hp << ", Speed: " << chr.speed << ", Position: \n ";
 	return output;
 };
 
@@ -94,27 +130,79 @@ void Character::Move(int steps) {
 	 std::cout << "Enter speed: ";
 	 input >> chr.speed;
 	 std::cout << "Enter position: ";
-	 input >> chr.position;
 	 return input;
  };
 
-Weapon::Weapon()
-	:name{ "None"}, damage{0}, durability{0} {
-}
-Weapon::Weapon(std::string new_name)
-	:name{ new_name }, damage{ 0 }, durability{ 0 } {
-}
-Weapon::Weapon(std::string new_name, int new_damage)
-	:name{ new_name }, damage{ new_damage }, durability{ 0 } {
-}
-Weapon::Weapon(std::string new_name, int new_damage, double new_durability)
-	:name{new_name}, damage{new_damage},durability{new_durability} { }
+ Weapon::Weapon()
+	 : GameObject(), name{ "Unknown" }, damage{ 0 }, durability{ 100.0 } {
+ }
+
+ Weapon::Weapon(std::string new_name)
+	 : GameObject(), name{ std::move(new_name) }, damage{ 0 }, durability{ 100.0 } {
+ }
+
+ Weapon::Weapon(std::string new_name, int new_damage)
+	 : GameObject(), name{ std::move(new_name) }, damage{ new_damage }, durability{ 100.0 } {
+ }
+
+ Weapon::Weapon(std::string new_name, int new_damage, double new_durability)
+	 : GameObject(), name{ std::move(new_name) }, damage{ new_damage }, durability{ new_durability } {
+ }
+
+ Weapon::Weapon(std::string new_name, int new_damage, double new_durability, int new_mass)
+	 : GameObject(new_mass), name{ std::move(new_name) }, damage{ new_damage }, durability{ new_durability } {
+ }
+
+ Weapon::Weapon(std::string new_name, int new_damage, double new_durability, int new_mass, int new_position)
+	 : GameObject(new_mass, new_position), name{ std::move(new_name) }, damage{ new_damage }, durability{ new_durability } {
+ }
+
+ Weapon::Weapon(const Weapon& origin)
+	 : GameObject(origin), name{ origin.name }, damage{ origin.damage }, durability{ origin.durability } {
+ }
+
 
 Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
 
-Weapon::Weapon(const Weapon& origin) :name{ origin.name }, damage{ origin.damage }, durability{ origin.durability }{
-	std::cout << "\n Copied\n";
+
+ void RangedWeapon::Shoot(Character& chr) {
+	 if (this->capacity == 0) {
+		 return;
+	 }
+	 int currentTargetPos = chr.GetPosition();
+	 int currentShooterPos = this->GetPosition();
+	 if (this->range > (currentTargetPos - currentShooterPos)) {
+		 this->Attack(chr);
+	 }
 }
+
+ void RangedWeapon::Reload(int ammo) {
+	 this->capacity = ammo;
+ }
+
+ RangedWeapon::RangedWeapon()
+	 : Weapon(), range{ 0 }, capacity{ 0 } {
+ }
+
+ RangedWeapon::RangedWeapon(std::string new_name)
+	 : Weapon(new_name), range{ 0 }, capacity{ 0 } {
+ }
+
+ RangedWeapon::RangedWeapon(std::string new_name, int new_damage)
+	 : Weapon(new_name, new_damage), range{ 0 }, capacity{ 0 } {
+ }
+
+ RangedWeapon::RangedWeapon(std::string new_name, int new_damage, double new_durability)
+	 : Weapon(new_name, new_damage, new_durability), range{ 0 }, capacity{ 0 } {
+ }
+
+ RangedWeapon::RangedWeapon(std::string new_name, int new_damage, double new_durability, int new_range, int new_capacity)
+	 : Weapon(new_name, new_damage, new_durability), range{ new_range }, capacity{ new_capacity } {
+ }
+
+ RangedWeapon::~RangedWeapon() {
+ }
+
 
 Weapon& Weapon::operator--() {
 	if (durability > 0) {
@@ -131,18 +219,7 @@ Weapon& Weapon::operator--() {
 
 
 int main() {
-	
-
-GameObject helldiver = GameObject::GameObject("John Helldiver", 1000);
-GameObject newHelldiver = GameObject::GameObject(helldiver);
-std::cout << "\nPause\n";
-
-		GameObject rock = GameObject("stone");
-		std::cout << rock.GetName();
-		Character guy = Character("John", 35, 30, 10);
-		guy.Move(3);
 		Weapon sword = Weapon("Sword", 15);
-		sword.Attack(guy);
 		std::cout << "\nnumber of deaths: " << Character::getDeathsCount() << endl;
 		return 0;
 }
