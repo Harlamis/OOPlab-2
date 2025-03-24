@@ -15,7 +15,7 @@ void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
 	}
 };
 
-void GameObject::Drag(int distance) {
+void GameObject::Move(int distance) {
 	this->position += distance;
 };
 
@@ -113,7 +113,7 @@ void Character::Move(int steps) {
 	for (int i = 0; i < steps; i++) {
 		int currentPos = this->GetPosition();
 		currentPos += this->speed;
-		Drag(currentPos);
+		this->SetPosition(currentPos);
 	};
 }
 
@@ -163,6 +163,10 @@ void Character::Move(int steps) {
 
 
 Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
+
+void DynamicDemoFunc(Weapon& wpn) {
+	wpn.DynamicDemo();
+};
 
 
  void RangedWeapon::Shoot(Character& chr) {
@@ -219,7 +223,18 @@ Weapon& Weapon::operator--() {
 
 
 int main() {
+	GameObject* chr = new Character;
+	GameObject* wpn = new Weapon;
+	chr->Hello();
+	wpn->Hello();
 	Weapon* demo = new RangedWeapon;
 	demo->StaticDemo();
+	Weapon sword;
+	RangedWeapon bow;
+	DynamicDemoFunc(sword);
+	DynamicDemoFunc(bow);
+	delete chr;
+	delete wpn;
+	delete demo;
 		return 0;
 }
