@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <string>
 
 class GameObject {
@@ -58,6 +59,7 @@ public:
 	Weapon& operator--();
 	std::string GetName() { return this->name; };
 	void Attack(Character& target);
+	void StaticDemo() { std::cout << "This is Weapon demo!\n"; };
 	Weapon();
 	Weapon(std::string new_name);
 	Weapon(std::string new_name, int  new_damage);
@@ -75,6 +77,7 @@ private:
 public:
 	void Shoot(Character& chr);
 	void Reload(int ammo);
+	void StaticDemo() { std::cout << "This is RangedWeapon demo!\n"; };
 	RangedWeapon();
 	RangedWeapon(std::string new_name);
 	RangedWeapon(std::string new_name, int new_damage);

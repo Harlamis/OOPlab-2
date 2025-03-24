@@ -219,7 +219,7 @@ Weapon& Weapon::operator--() {
 
 
 int main() {
-		Weapon sword = Weapon("Sword", 15);
-		std::cout << "\nnumber of deaths: " << Character::getDeathsCount() << endl;
+	Weapon* demo = new RangedWeapon;
+	demo->StaticDemo();
 		return 0;
 }
