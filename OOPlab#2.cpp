@@ -68,6 +68,10 @@ Character& Character::operator=(const Character& rhs) {
 	return *this;
 };
 
+void Character::TakeDamage(int amount) {
+	this->hp -= amount;
+}
+
 Character::Character()
 	: GameObject(), name("Unnamed"), hp(100), speed(1) {
 }
@@ -161,12 +165,15 @@ void Character::Move(int steps) {
 	 : GameObject(origin), name{ origin.name }, damage{ origin.damage }, durability{ origin.durability } {
  }
 
-
+ void Weapon::TakeDamage(int amount) {
+	 this->durability -= amount;
+ };
 Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
 
 void DynamicDemoFunc(Weapon& wpn) {
 	wpn.DynamicDemo();
 };
+
 
 
  void RangedWeapon::Shoot(Character& chr) {

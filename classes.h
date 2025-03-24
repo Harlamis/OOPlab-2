@@ -2,7 +2,13 @@
 #include <iostream>
 #include <string>
 
-class GameObject {
+class Damagable {
+public:
+	virtual void TakeDamage(int amount) = 0;
+	virtual ~Damagable() {};
+};
+
+class GameObject  {
 private:
 	int mass;
 	int position;
@@ -26,13 +32,14 @@ public:
 
 };
 
-class Character : public GameObject {
+class Character : public GameObject,  public Damagable {
 private:
 	static int deathsCount;
 	std::string name;
 	int hp;
 	int speed;
 public:
+	virtual void TakeDamage( int amount) override;
 	virtual void SayMyName() override { std::cout << "I am a Character!\n"; };
 	static int getDeathsCount() { return deathsCount; };
 	std::string GetName() { return this->name; };
@@ -54,12 +61,13 @@ public:
 
 };
 
-class Weapon : public GameObject {
+class Weapon : public GameObject, public Damagable {
 private:
 	std::string name;
 	int damage;
 	double durability;
 public:
+	virtual void TakeDamage(int amount) override;
 	virtual void SayMyName() override { std::cout << "I am a Weapon!\n"; };
 	int GetDamage() { return this->damage; };
 	Weapon& operator--();
