@@ -230,12 +230,12 @@ Weapon& Weapon::operator--() {
 
 
 int main() {
+	Weapon* demo = new RangedWeapon;
+	demo->StaticDemo();
 	GameObject* chr = new Character;
 	GameObject* wpn = new Weapon;
 	chr->Hello();
 	wpn->Hello();
-	Weapon* demo = new RangedWeapon;
-	demo->StaticDemo();
 	Weapon sword;
 	RangedWeapon bow;
 	DynamicDemoFunc(sword);
