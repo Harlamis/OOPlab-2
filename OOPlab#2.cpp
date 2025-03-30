@@ -234,6 +234,22 @@ Weapon& Weapon::operator--() {
  //begininng of lab6 code//
  std::vector<Character*> Character::characters = {};
  int appMode{0};
+ std::string adminPass { "Harlam315" };
+ bool adminAuth() {
+	 int i = 3;
+	 std::string input;
+	 while (i != 0) {
+		 std::cout << "Please, enter your admin password " << i << " attempts left\n";
+		 std::cin >> input;
+		 if (input == adminPass) {
+			 return true;
+		 }
+		 input.clear();
+		 i--;
+	 }
+	 std::cout << "You entered the wrong password!\n";
+	 return false;
+ }
  void authScreen() {
 		 std::cout << "Welcome, please, choose the app mode:\n User mode: allows to interact with existing characters\n Admin mode (REQUIRES PASSWORD): allows to edit/create characters, weapons\n press 1 to enter user mode, press 2 to enter admin mode\n";
 		 try {
@@ -247,12 +263,14 @@ Weapon& Weapon::operator--() {
 
 			 if (appMode == 1) {
 				 std::cout << "Entering program in user mode...\n";
-				 // next screen func call (TBD)
+				 // next screen function call (TBD)
 			 }
 
 			 if (appMode == 2) {
-				 //admin auth function calling (TBD)
+				 if (adminAuth()) {
 				 std::cout << "Entering program in admin mode\n";
+				 //next screen function call (TBD)
+				 }
 			 }
 		 }
 		 catch (std::invalid_argument& ex) {
@@ -266,7 +284,6 @@ Weapon& Weapon::operator--() {
 			 authScreen();
 		 }
  };
-
 
 
 
