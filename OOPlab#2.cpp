@@ -1,5 +1,6 @@
 ﻿#include "classes.h"
 #include<iostream>
+#include <vector>
 using namespace std;
 
 void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
@@ -74,6 +75,8 @@ void Character::TakeDamage(int amount) {
 
 Character::Character()
 	: GameObject(), name("Unnamed"), hp(100), speed(1) {
+
+	Character::characters.push_back(this);
 }
 
 Character::Character(std::string new_name)
@@ -228,20 +231,49 @@ Weapon& Weapon::operator--() {
 
 }
 
+ //begininng of lab6 code//
+ std::vector<Character*> Character::characters = {};
+ int appMode{0};
+ void authScreen() {
+		 std::cout << "Welcome, please, choose the app mode:\n User mode: allows to interact with existing characters\n Admin mode (REQUIRES PASSWORD): allows to edit/create characters, weapons\n press 1 to enter user mode, press 2 to enter admin mode\n";
+		 try {
+			 std::cin >> appMode;
+			 if (std::cin.fail()) {
+				 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1 or 2\n");
+			 }
+			 if (appMode != 1 && appMode != 2) {
+				 throw std::out_of_range("ERROR: you typed a wrong value: try typing 1 or 2\n");
+			 }
+
+			 if (appMode == 1) {
+				 std::cout << "Entering program in user mode...\n";
+				 // next screen func call (TBD)
+			 }
+
+			 if (appMode == 2) {
+				 //admin auth function calling (TBD)
+				 std::cout << "Entering program in admin mode\n";
+			 }
+		 }
+		 catch (std::invalid_argument& ex) {
+			 std::cout << ex.what() << "\n";
+			 std::cin.clear();
+			 std::cin.ignore(100, '\n');
+			 authScreen();
+		 }
+		 catch (std::out_of_range& ex) {
+			 std::cout << ex.what() << "\n";
+			 authScreen();
+		 }
+ };
+
+
+
+
+
+
 
 int main() {
-	GameObject* chr = new Character;
-	GameObject* wpn = new Weapon;
-	chr->Hello();
-	wpn->Hello();
-	Weapon* demo = new RangedWeapon;
-	demo->StaticDemo();
-	Weapon sword;
-	RangedWeapon bow;
-	DynamicDemoFunc(sword);
-	DynamicDemoFunc(bow);
-	delete chr;
-	delete wpn;
-	delete demo;
+	authScreen();
 		return 0;
 }

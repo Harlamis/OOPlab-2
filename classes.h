@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 
 class Damagable {
 public:
@@ -34,6 +35,7 @@ public:
 
 class Character : public GameObject,  public Damagable {
 private:
+	static std::vector<Character*> characters;
 	static int deathsCount;
 	std::string name;
 	int hp;
