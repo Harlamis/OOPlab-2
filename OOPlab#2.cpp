@@ -1,6 +1,7 @@
 ﻿#include "classes.h"
 #include<iostream>
 #include <vector>
+#include <Windows.h>
 using namespace std;
 
 void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
@@ -263,13 +264,20 @@ Weapon& Weapon::operator--() {
 
 			 if (appMode == 1) {
 				 std::cout << "Entering program in user mode...\n";
+				 Sleep(2500);
+				 system("cls");
 				 // next screen function call (TBD)
 			 }
 
 			 if (appMode == 2) {
 				 if (adminAuth()) {
 				 std::cout << "Entering program in admin mode\n";
+				 Sleep(2500);
+				 system("cls");
 				 //next screen function call (TBD)
+				 }
+				 else {
+					 authScreen();
 				 }
 			 }
 		 }
@@ -285,8 +293,19 @@ Weapon& Weapon::operator--() {
 		 }
  };
 
+ 
+ void mainScreen() {
+	 if (appMode == 2) {
+		 int choice { 0 };
+		 while (choice != 1 && choice != 2) {
+		 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n"; << "3) create a new character " << "4) create a new weapon"
+		 std::cin >> choice;
+		 }
+	 }
+	 else {
 
-
+	 }
+ }
 
 
 
