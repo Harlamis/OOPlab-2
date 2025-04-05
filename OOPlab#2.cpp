@@ -1,5 +1,7 @@
 ﻿#include "classes.h"
 #include<iostream>
+#include <vector>
+#include <Windows.h>
 using namespace std;
 
 void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
@@ -74,6 +76,8 @@ void Character::TakeDamage(int amount) {
 
 Character::Character()
 	: GameObject(), name("Unnamed"), hp(100), speed(1) {
+
+	Character::characters.push_back(this);
 }
 
 Character::Character(std::string new_name)
@@ -228,20 +232,94 @@ Weapon& Weapon::operator--() {
 
 }
 
+ //begininng of lab6 code//
+ std::vector<Character*> Character::characters = {};
+ int appMode{0};
+ std::string adminPass { "Harlam315" };
+ bool adminAuth() {
+	 int i = 3;
+	 std::string input;
+	 while (i != 0) {
+		 std::cout << "Please, enter your admin password " << i << " attempts left\n";
+		 std::cin >> input;
+		 if (input == adminPass) {
+			 return true;
+		 }
+		 input.clear();
+		 i--;
+	 }
+	 std::cout << "You entered the wrong password!\n";
+	 return false;
+ }
+ void authScreen() {
+		 std::cout << "Welcome, please, choose the app mode:\n User mode: allows to interact with existing characters\n Admin mode (REQUIRES PASSWORD): allows to edit/create characters, weapons\n press 1 to enter user mode, press 2 to enter admin mode\n";
+		 try {
+			 std::cin >> appMode;
+			 if (std::cin.fail()) {
+				 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1 or 2\n");
+			 }
+			 if (appMode != 1 && appMode != 2) {
+				 throw std::out_of_range("ERROR: you typed a wrong value: try typing 1 or 2\n");
+			 }
+
+			 if (appMode == 1) {
+				 std::cout << "Entering program in user mode...\n";
+				 Sleep(2500);
+				 system("cls");
+				 // next screen function call (TBD)
+			 }
+
+			 if (appMode == 2) {
+				 if (adminAuth()) {
+				 std::cout << "Entering program in admin mode\n";
+				 Sleep(2500);
+				 system("cls");
+				 //next screen function call (TBD)
+				 }
+				 else {
+					 authScreen();
+				 }
+			 }
+		 }
+		 catch (std::invalid_argument& ex) {
+			 std::cout << ex.what() << "\n";
+			 std::cin.clear();
+			 std::cin.ignore(100, '\n');
+			 authScreen();
+		 }
+		 catch (std::out_of_range& ex) {
+			 std::cout << ex.what() << "\n";
+			 authScreen();
+		 }
+ };
+
+ 
+ void mainScreen() {
+	 if (appMode == 2) {
+		 int choice { 0 };
+		 try {
+		 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n"; << "3) create a new character " << "4) create a new weapon"
+		 std::cin >> choice;
+		 if (std::cin.fail()) {
+			 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1-4\n");
+		 }
+		 if (choice != 1 && choice != 2 && choice != 3 && choice != 4) {
+			 throw std::out_of_range("ERROR: this command does not exist: try typing 1-4\n");
+		 }
+		 if (choice == 1) {
+			 std::cout << "Displaying existing characters...\n";
+				 // TODO display function call 
+		 }
+		 }
+	 }
+	 else {
+
+	 }
+ }
+
+
 
 int main() {
-	Weapon* demo = new RangedWeapon;
-	demo->StaticDemo();
-	GameObject* chr = new Character;
-	GameObject* wpn = new Weapon;
-	chr->Hello();
-	wpn->Hello();
-	Weapon sword;
-	RangedWeapon bow;
-	DynamicDemoFunc(sword);
-	DynamicDemoFunc(bow);
-	delete chr;
-	delete wpn;
-	delete demo;
+	authScreen();
 		return 0;
 }
