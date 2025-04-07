@@ -70,14 +70,11 @@ Character& Character::operator=(const Character& rhs) {
 	return *this;
 };
 
-void Character::TakeDamage(int amount) {
-	this->hp -= amount;
-}
+
 
 Character::Character()
 	: GameObject(), name("Unnamed"), hp(100), speed(1) {
 
-	Character::characters.push_back(this);
 }
 
 Character::Character(std::string new_name)
@@ -169,9 +166,7 @@ void Character::Move(int steps) {
 	 : GameObject(origin), name{ origin.name }, damage{ origin.damage }, durability{ origin.durability } {
  }
 
- void Weapon::TakeDamage(int amount) {
-	 this->durability -= amount;
- };
+
 Weapon::~Weapon() { std::cout << "weapon deleted\n"; }
 
 void DynamicDemoFunc(Weapon& wpn) {
@@ -233,9 +228,60 @@ Weapon& Weapon::operator--() {
 }
 
  //begininng of lab6 code//
- std::vector<Character*> Character::characters = {};
  int appMode{0};
  std::string adminPass { "Harlam315" };
+ void Character::PrintInfo() const {
+	 std::cout << "Character " << name << " " << hp << " " << speed << "\n";
+ }
+ void Character::SaveToFile(std::ofstream& file) const {
+	 file << "Character " << name << " " << hp << " " << speed << "\n";
+ }
+ void Weapon::PrintInfo() const {
+	 std::cout << "Weapon: " << name << ", Damage: " << damage << ", Durability: " << durability << "%" << '\n';
+ }
+ void Weapon::SaveToFile(std::ofstream& file) const {
+	 file << "Weapon " << name << " " << damage << " " << durability << "\n";
+ }
+ void FileSave(const std::vector<std::unique_ptr<Savable>>& objects, const std::string& filename) {
+	 std::ofstream file(filename);
+	 if (!file) {
+		 std::cerr << "Error opening file for writing!\n";
+		 return;
+	 }
+	 for (auto& obj : objects) {
+		 obj->SaveToFile(file);
+	 }
+	 file.close();
+ }
+ std::vector<std::unique_ptr<Savable>> FileLoad(const std::string& fileName) {
+	 std::ifstream file(fileName);
+	 if (!file) {
+		 std::cerr << "Error opening file for reading!\n";
+		 return {};
+	 }
+	 std::vector<std::unique_ptr<Savable>> objects;
+	 std::string type;
+	 while (file >> type) {
+		 if (type == "Character") {
+			 std::string name;
+			 int hp;
+			 int speed;
+			 file >> name >> hp >> speed;
+			 objects.push_back(std::make_unique<Character>(name, hp, speed));
+		 }
+		 else if (type == "Weapon") {
+			 std::string name;
+			 int damage;
+			 double durability;
+			 file >> name >> damage >> durability;
+			 objects.push_back(std::make_unique<Weapon>(name, damage, durability));
+		 }
+	 }
+	 file.close();
+	 return objects;
+ }
+
+
  bool adminAuth() {
 	 int i = 3;
 	 std::string input;
@@ -298,7 +344,7 @@ Weapon& Weapon::operator--() {
 	 if (appMode == 2) {
 		 int choice { 0 };
 		 try {
-		 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n"; << "3) create a new character " << "4) create a new weapon"
+			 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n" << "3) create a new character " << "4) create a new weapon";
 		 std::cin >> choice;
 		 if (std::cin.fail()) {
 			 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1-4\n");
@@ -308,8 +354,40 @@ Weapon& Weapon::operator--() {
 		 }
 		 if (choice == 1) {
 			 std::cout << "Displaying existing characters...\n";
+			 Sleep(1500);
+			 system("cls");
 				 // TODO display function call 
 		 }
+		 if (choice == 2) {
+			 std::cout << "Displaying existing weapons...\n";
+			 Sleep(1500);
+			 system("cls");
+			 // TODO display function call 
+		 }
+		 if (choice == 3) {
+			 std::cout << "Entering creating mode...\n";
+			 Sleep(1500);
+			 system("cls");
+			 // TODO create function call
+		 }
+		 if (choice == 4) {
+			 std::cout << "Entering creating mode...\n";
+			 Sleep(1500);
+			 system("cls");
+			 // TODO create function call
+		 }
+		 }
+		 catch (std::invalid_argument& ex) {
+			 std::cout << ex.what() << "\n";
+			 std::cin.clear();
+			 std::cin.ignore(100, '\n');
+			 mainScreen();
+		 }
+		 catch (std::out_of_range& ex) {
+			 std::cout << ex.what() << "\n";
+			 std::cin.clear();
+			 std::cin.ignore(100, '\n');
+			 mainScreen();
 		 }
 	 }
 	 else {

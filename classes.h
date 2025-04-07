@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 class Damagable {
 public:
@@ -33,15 +34,22 @@ public:
 
 };
 
-class Character : public GameObject,  public Damagable {
+class Savable {
+public:
+	virtual void PrintInfo() const = 0;
+	virtual void SaveToFile(std::ofstream& file) const = 0;
+	virtual ~Savable() = default;
+};
+
+class Character : public GameObject, public Savable {
 private:
-	static std::vector<Character*> characters;
 	static int deathsCount;
 	std::string name;
 	int hp;
 	int speed;
 public:
-	virtual void TakeDamage( int amount) override;
+	virtual void PrintInfo() const override;
+	virtual void SaveToFile(std::ofstream& file) const override;
 	virtual void SayMyName() override { std::cout << "I am a Character!\n"; };
 	static int getDeathsCount() { return deathsCount; };
 	std::string GetName() { return this->name; };
@@ -63,14 +71,15 @@ public:
 
 };
 
-class Weapon : public GameObject, public Damagable {
+class Weapon : public GameObject, public Savable {
 private:
 	std::string name;
 	int damage;
 	double durability;
 public:
-	virtual void TakeDamage(int amount) override;
 	virtual void SayMyName() override { std::cout << "I am a Weapon!\n"; };
+	virtual void PrintInfo() const override;
+	virtual void SaveToFile(std::ofstream& file) const override;
 	int GetDamage() { return this->damage; };
 	Weapon& operator--();
 	std::string GetName() { return this->name; };
