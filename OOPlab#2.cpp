@@ -1,7 +1,9 @@
 ﻿#include "classes.h"
 #include<iostream>
+#include <sstream>
 #include <vector>
 #include <Windows.h>
+#include <ctime>
 using namespace std;
 
 void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
@@ -231,55 +233,117 @@ Weapon& Weapon::operator--() {
  int appMode{0};
  std::string adminPass { "Harlam315" };
  void Character::PrintInfo() const {
-	 std::cout << "Character " << name << " " << hp << " " << speed << "\n";
+	 std::cout << "Character: " << name
+		 << ", HP: " << hp
+		 << ", Speed: " << speed
+		 << '\n';
  }
  void Character::SaveToFile(std::ofstream& file) const {
-	 file << "Character " << name << " " << hp << " " << speed << "\n";
+	 file << "Character: " << name
+		 << ", HP: " << hp
+		 << ", Speed: " << speed << '\n';
  }
+ 
+
  void Weapon::PrintInfo() const {
 	 std::cout << "Weapon: " << name << ", Damage: " << damage << ", Durability: " << durability << "%" << '\n';
  }
+
  void Weapon::SaveToFile(std::ofstream& file) const {
 	 file << "Weapon " << name << " " << damage << " " << durability << "\n";
  }
- void FileSave(const std::vector<std::unique_ptr<Savable>>& objects, const std::string& filename) {
-	 std::ofstream file(filename);
-	 if (!file) {
-		 std::cerr << "Error opening file for writing!\n";
+
+ void PrintCharacters(const std::vector<std::unique_ptr<Savable>>& objects) {
+	 std::cout << "\nCharacters:\n";
+	 for (const auto& obj : objects) {
+		 if (auto character = dynamic_cast<Character*>(obj.get())) {
+			 character->PrintInfo();
+		 }
+	 }
+ }
+
+ void PrintWeapons(const std::vector<std::unique_ptr<Savable>>& objects) {
+	 std::cout << "\nWeapons:\n";
+	 for (const auto& obj : objects) {
+		 if (auto weapon = dynamic_cast<Weapon*>(obj.get())) {
+			 weapon->PrintInfo();
+		 }
+	 }
+ }
+
+ std::string GetTime() {
+	 time_t now = time(0);
+	 char buffer[80];
+	 strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&now));
+	 return std::string(buffer);
+ }
+
+
+ void SaveToFile(const std::vector<std::unique_ptr<Savable>>& objects) {
+	 std::ofstream charFile("characters.txt", std::ios::app);
+	 std::ofstream weaponFile("weapons.txt", std::ios::app);
+	 std::ofstream logFile("log.txt", std::ios::app);
+
+	 if (!charFile || !weaponFile || !logFile) {
+		 std::cerr << "Error opening file!\n";
 		 return;
 	 }
-	 for (auto& obj : objects) {
-		 obj->SaveToFile(file);
-	 }
-	 file.close();
- }
- std::vector<std::unique_ptr<Savable>> FileLoad(const std::string& fileName) {
-	 std::ifstream file(fileName);
-	 if (!file) {
-		 std::cerr << "Error opening file for reading!\n";
-		 return {};
-	 }
-	 std::vector<std::unique_ptr<Savable>> objects;
-	 std::string type;
-	 while (file >> type) {
-		 if (type == "Character") {
-			 std::string name;
-			 int hp;
-			 int speed;
-			 file >> name >> hp >> speed;
-			 objects.push_back(std::make_unique<Character>(name, hp, speed));
+
+	 for (const auto& obj : objects) {
+		 if (auto character = dynamic_cast<Character*>(obj.get())) {
+			 charFile << GetTime() << " - ";
+			 character->SaveToFile(charFile);
+			 logFile << GetTime() << " - Character added\n";
 		 }
-		 else if (type == "Weapon") {
-			 std::string name;
-			 int damage;
-			 double durability;
-			 file >> name >> damage >> durability;
-			 objects.push_back(std::make_unique<Weapon>(name, damage, durability));
+		 else if (auto weapon = dynamic_cast<Weapon*>(obj.get())) {
+			 weaponFile << GetTime() << " - ";
+			 weapon->SaveToFile(weaponFile);
+			 logFile << GetTime() << " - Weapon added\n";
 		 }
 	 }
-	 file.close();
-	 return objects;
+
+	 charFile.close();
+	 weaponFile.close();
+	 logFile.close();
  }
+
+
+ void LoadFromFile(std::vector<std::unique_ptr<Savable>>& objects) {
+	 std::ifstream charFile("characters.txt");
+	 std::ifstream weaponFile("weapons.txt");
+
+	 std::string line;
+
+	 while (std::getline(charFile, line)) {
+		 std::istringstream iss(line);
+		 std::string timestamp, name;
+		 int hp, speed;
+
+		 iss >> timestamp;
+		 std::getline(iss, name, ',');
+		 iss >> hp >> speed;
+
+		 objects.push_back(std::make_unique<Character>(name, hp, speed));
+	 }
+
+	 while (std::getline(weaponFile, line)) {
+		 std::istringstream iss(line);
+		 std::string timestamp, name;
+		 int damage;
+		 double durability;
+
+		 iss >> timestamp;
+		 std::getline(iss, name, ',');
+		 iss >> damage >> durability;
+
+		 objects.push_back(std::make_unique<Weapon>(name, damage, durability));
+	 }
+
+	 charFile.close();
+	 weaponFile.close();
+ }
+
+
 
 
  bool adminAuth() {
@@ -341,6 +405,7 @@ Weapon& Weapon::operator--() {
 
  
  void mainScreen() {
+	 std::vector<std::unique_ptr<Savable>> objects;
 	 if (appMode == 2) {
 		 int choice { 0 };
 		 try {
