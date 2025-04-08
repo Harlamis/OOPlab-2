@@ -3,7 +3,9 @@
 #include <sstream>
 #include <vector>
 #include <Windows.h>
-#include <ctime>
+#include <chrono>
+#include <format>
+#define _CRT_SECURE_NO_WARNINGS
 using namespace std;
 
 void GameObject::Collide(GameObject& obj1, GameObject& obj2) {
@@ -231,6 +233,7 @@ Weapon& Weapon::operator--() {
 
  //begininng of lab6 code//
  int appMode{0};
+ std::vector<std::unique_ptr<Savable>> dataArr;
  std::string adminPass { "Harlam315" };
  void Character::PrintInfo() const {
 	 std::cout << "Character: " << name
@@ -239,9 +242,7 @@ Weapon& Weapon::operator--() {
 		 << '\n';
  }
  void Character::SaveToFile(std::ofstream& file) const {
-	 file << "Character: " << name
-		 << ", HP: " << hp
-		 << ", Speed: " << speed << '\n';
+	 file << name << "," << hp << "," << speed << "\n";
  }
  
 
@@ -250,7 +251,7 @@ Weapon& Weapon::operator--() {
  }
 
  void Weapon::SaveToFile(std::ofstream& file) const {
-	 file << "Weapon " << name << " " << damage << " " << durability << "\n";
+	 file << name << "," << damage << "," << durability << "\n";
  }
 
  void PrintCharacters(const std::vector<std::unique_ptr<Savable>>& objects) {
@@ -271,12 +272,7 @@ Weapon& Weapon::operator--() {
 	 }
  }
 
- std::string GetTime() {
-	 time_t now = time(0);
-	 char buffer[80];
-	 strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&now));
-	 return std::string(buffer);
- }
+ 
 
 
  void SaveToFile(const std::vector<std::unique_ptr<Savable>>& objects) {
@@ -291,14 +287,12 @@ Weapon& Weapon::operator--() {
 
 	 for (const auto& obj : objects) {
 		 if (auto character = dynamic_cast<Character*>(obj.get())) {
-			 charFile << GetTime() << " - ";
 			 character->SaveToFile(charFile);
-			 logFile << GetTime() << " - Character added\n";
+			 logFile <<  " - Character added\n";
 		 }
 		 else if (auto weapon = dynamic_cast<Weapon*>(obj.get())) {
-			 weaponFile << GetTime() << " - ";
 			 weapon->SaveToFile(weaponFile);
-			 logFile << GetTime() << " - Weapon added\n";
+			 logFile <<  " - Weapon added\n";
 		 }
 	 }
 
@@ -315,26 +309,31 @@ Weapon& Weapon::operator--() {
 	 std::string line;
 
 	 while (std::getline(charFile, line)) {
-		 std::istringstream iss(line);
-		 std::string timestamp, name;
-		 int hp, speed;
+		 std::stringstream iss(line);
+		 std::string nameStr, hpStr, speedStr;
 
-		 iss >> timestamp;
-		 std::getline(iss, name, ',');
-		 iss >> hp >> speed;
+		 std::getline(iss, nameStr, ',');
+		 std::getline(iss, hpStr, ',');
+		 std::getline(iss, speedStr, ',');
+
+		 std::string name = nameStr;
+		 int hp = std::stoi(hpStr);
+		 int speed = std::stoi(speedStr);
 
 		 objects.push_back(std::make_unique<Character>(name, hp, speed));
 	 }
 
 	 while (std::getline(weaponFile, line)) {
-		 std::istringstream iss(line);
-		 std::string timestamp, name;
-		 int damage;
-		 double durability;
+		 std::stringstream iss(line);
+		 std::string nameStr, damageStr, durabilityStr;
 
-		 iss >> timestamp;
-		 std::getline(iss, name, ',');
-		 iss >> damage >> durability;
+		 std::getline(iss, nameStr, ',');
+		 std::getline(iss, damageStr, ',');
+		 std::getline(iss, durabilityStr, ',');
+
+		 std::string name = nameStr;
+		 int damage = std::stoi(damageStr);
+		 double durability = std::stod(durabilityStr);
 
 		 objects.push_back(std::make_unique<Weapon>(name, damage, durability));
 	 }
@@ -344,6 +343,9 @@ Weapon& Weapon::operator--() {
  }
 
 
+ void CreationMode();
+ void mainScreen();
+ void wCreationMode();
 
 
  bool adminAuth() {
@@ -361,6 +363,153 @@ Weapon& Weapon::operator--() {
 	 std::cout << "You entered the wrong password!\n";
 	 return false;
  }
+ void mainScreen() {
+	 int choice{ 0 };
+	 if (appMode == 2) {
+		 try {
+			 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n" << "3) create a new character " << "4) create a new weapon" << "5) save changes\n";
+			 std::cin >> choice;
+			 if (std::cin.fail()) {
+				 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1-5\n");
+			 }
+			 if (choice != 1 && choice != 2 && choice != 3 && choice != 4 && choice != 5) {
+				 throw std::out_of_range("ERROR: this command does not exist: try typing 1-5\n");
+			 }
+			 if (choice == 1) {
+				 LoadFromFile(dataArr);
+				 std::cout << "Displaying existing characters...\n";
+				 Sleep(1500);
+				 system("cls");
+				 PrintCharacters(dataArr);
+				 mainScreen();
+			 }
+			 if (choice == 2) {
+				 std::cout << "Displaying existing weapons...\n";
+				 Sleep(1500);
+				 system("cls");
+				 PrintWeapons(dataArr);
+				 mainScreen();
+			 }
+			 if (choice == 3) {
+				 std::cout << "Entering creating mode...\n";
+				 Sleep(1500);
+				 system("cls");
+				 CreationMode();
+			 }
+			 if (choice == 4) {
+				 std::cout << "Entering creating mode...\n";
+				 Sleep(1500);
+				 system("cls");
+				 wCreationMode();
+			 }
+
+			 if (choice == 5) {
+				 SaveToFile(dataArr);
+				 mainScreen();
+			 }
+
+		 }
+		 catch (std::invalid_argument& ex) {
+			 std::cout << ex.what() << "\n";
+			 std::cin.clear();
+			 std::cin.ignore(100, '\n');
+			 mainScreen();
+		 }
+		 catch (std::out_of_range& ex) {
+			 std::cout << ex.what() << "\n";
+			 std::cin.clear();
+			 std::cin.ignore(100, '\n');
+			 mainScreen();
+		 }
+	 }
+	 else {
+		 try {
+			 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n";
+			 std::cin >> choice;
+			 if (std::cin.fail()) {
+				 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1-2\n");
+			 }
+			 if (choice != 1 && choice != 2 && choice != 3 && choice != 4 && choice != 5) {
+				 throw std::out_of_range("ERROR: this command does not exist: try typing 1-2\n");
+			 }
+			 if (choice == 1) {
+				 LoadFromFile(dataArr);
+				 std::cout << "Displaying existing characters...\n";
+				 Sleep(1500);
+				 system("cls");
+				 PrintCharacters(dataArr);
+				 mainScreen();
+			 }
+			 if (choice == 2) {
+				 std::cout << "Displaying existing weapons...\n";
+				 Sleep(1500);
+				 system("cls");
+				 PrintWeapons(dataArr);
+				 mainScreen();
+			 }
+		 }
+		 catch (std::invalid_argument& ex) {
+			 std::cout << ex.what() << "\n";
+			 std::cin.clear();
+			 std::cin.ignore(100, '\n');
+			 mainScreen();
+		 }
+		 catch (std::out_of_range& ex) {
+			 std::cout << ex.what() << "\n";
+			 std::cin.clear();
+			 std::cin.ignore(100, '\n');
+			 mainScreen();
+		 };
+	 }
+ }
+void wCreationMode() {
+	 system("cls");
+	 std::string inputName;
+	 std::cout << "Please, enter weapon's name: ";
+	 std::cin >> inputName;
+	 std::cout << "\nPlease enter weapon's damage: ";
+	 int inputDmg;
+	 std::cin >> inputDmg;
+	 std::cout << "\nPlease, enter weeapon's durability: ";
+	 double inputDur;
+	 std::cin >> inputDur;
+	 std::cout << '\n';
+	 dataArr.push_back(std::make_unique<Weapon>(inputName, inputDmg, inputDur));
+	 std::cout << "Do you want to create an another Weapon? y/n \n";
+	 std::string anotherChoice;
+	 std::cin >> anotherChoice;
+	 if (anotherChoice == std::string("y")) {
+		 wCreationMode();
+	 }
+	 else {
+		 mainScreen();
+	 }
+ }
+ void CreationMode() {
+	 system("cls");
+	 std::string inputName;
+	 std::cout << "Please, enter character's name: ";
+	 std::cin >> inputName;
+	 std::cout << "\nPlease enter character's hp: ";
+	 int inputHp;
+	 std::cin >> inputHp;
+	 std::cout << "\nPlease, enter character's speed: ";
+	 int inputSpeed;
+	 std::cin >> inputSpeed;
+	 std::cout << '\n';
+	 dataArr.push_back(std::make_unique<Character>(inputName, inputHp, inputSpeed));
+	 std::cout << "Do you want to create an another character? y/n \n";
+	 std::string anotherChoice;
+	 std::cin >> anotherChoice;
+	 if (anotherChoice == std::string("y")) {
+		 CreationMode();
+	 }
+	 else {
+		 mainScreen();
+	 }
+
+ }
+
  void authScreen() {
 		 std::cout << "Welcome, please, choose the app mode:\n User mode: allows to interact with existing characters\n Admin mode (REQUIRES PASSWORD): allows to edit/create characters, weapons\n press 1 to enter user mode, press 2 to enter admin mode\n";
 		 try {
@@ -376,7 +525,7 @@ Weapon& Weapon::operator--() {
 				 std::cout << "Entering program in user mode...\n";
 				 Sleep(2500);
 				 system("cls");
-				 // next screen function call (TBD)
+				 mainScreen();
 			 }
 
 			 if (appMode == 2) {
@@ -384,7 +533,7 @@ Weapon& Weapon::operator--() {
 				 std::cout << "Entering program in admin mode\n";
 				 Sleep(2500);
 				 system("cls");
-				 //next screen function call (TBD)
+				 mainScreen();
 				 }
 				 else {
 					 authScreen();
@@ -404,61 +553,6 @@ Weapon& Weapon::operator--() {
  };
 
  
- void mainScreen() {
-	 std::vector<std::unique_ptr<Savable>> objects;
-	 if (appMode == 2) {
-		 int choice { 0 };
-		 try {
-			 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n" << "3) create a new character " << "4) create a new weapon";
-		 std::cin >> choice;
-		 if (std::cin.fail()) {
-			 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1-4\n");
-		 }
-		 if (choice != 1 && choice != 2 && choice != 3 && choice != 4) {
-			 throw std::out_of_range("ERROR: this command does not exist: try typing 1-4\n");
-		 }
-		 if (choice == 1) {
-			 std::cout << "Displaying existing characters...\n";
-			 Sleep(1500);
-			 system("cls");
-				 // TODO display function call 
-		 }
-		 if (choice == 2) {
-			 std::cout << "Displaying existing weapons...\n";
-			 Sleep(1500);
-			 system("cls");
-			 // TODO display function call 
-		 }
-		 if (choice == 3) {
-			 std::cout << "Entering creating mode...\n";
-			 Sleep(1500);
-			 system("cls");
-			 // TODO create function call
-		 }
-		 if (choice == 4) {
-			 std::cout << "Entering creating mode...\n";
-			 Sleep(1500);
-			 system("cls");
-			 // TODO create function call
-		 }
-		 }
-		 catch (std::invalid_argument& ex) {
-			 std::cout << ex.what() << "\n";
-			 std::cin.clear();
-			 std::cin.ignore(100, '\n');
-			 mainScreen();
-		 }
-		 catch (std::out_of_range& ex) {
-			 std::cout << ex.what() << "\n";
-			 std::cin.clear();
-			 std::cin.ignore(100, '\n');
-			 mainScreen();
-		 }
-	 }
-	 else {
-
-	 }
- }
 
 
 
