@@ -241,18 +241,18 @@ Weapon& Weapon::operator--() {
 		 << ", Speed: " << speed
 		 << '\n';
  }
- void Character::SaveToFile(std::ofstream& file) const {
-	 file << name << "," << hp << "," << speed << "\n";
- }
- 
-
  void Weapon::PrintInfo() const {
 	 std::cout << "Weapon: " << name << ", Damage: " << damage << ", Durability: " << durability << "%" << '\n';
  }
-
+ void Character::SaveToFile(std::ofstream& file) const {
+	 file << name << "," << hp << "," << speed << "\n";
+ }
  void Weapon::SaveToFile(std::ofstream& file) const {
 	 file << name << "," << damage << "," << durability << "\n";
  }
+
+ 
+
 
  void PrintCharacters(const std::vector<std::unique_ptr<Savable>>& objects) {
 	 std::cout << "\nCharacters:\n";
@@ -367,7 +367,7 @@ Weapon& Weapon::operator--() {
 	 int choice{ 0 };
 	 if (appMode == 2) {
 		 try {
-			 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n" << "3) create a new character " << "4) create a new weapon" << "5) save changes\n";
+			 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n" << "3) create a new character " << "4) create a new weapon" << "5) save changes and exit\n";
 			 std::cin >> choice;
 			 if (std::cin.fail()) {
 				 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1-5\n");
@@ -405,7 +405,6 @@ Weapon& Weapon::operator--() {
 
 			 if (choice == 5) {
 				 SaveToFile(dataArr);
-				 mainScreen();
 			 }
 
 		 }
@@ -424,16 +423,15 @@ Weapon& Weapon::operator--() {
 	 }
 	 else {
 		 try {
-			 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons\n";
+			 std::cout << "Please, choose your next action:\n" << "1) show current existing characters " << "2) show existing weapons" << "3) exit the program.\n";
 			 std::cin >> choice;
 			 if (std::cin.fail()) {
-				 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1-2\n");
+				 throw std::invalid_argument("ERROR: you typed wrong value: try typing 1-3\n");
 			 }
-			 if (choice != 1 && choice != 2 && choice != 3 && choice != 4 && choice != 5) {
-				 throw std::out_of_range("ERROR: this command does not exist: try typing 1-2\n");
+			 if (choice != 1 && choice != 2 && choice != 3) {
+				 throw std::out_of_range("ERROR: this command does not exist: try typing 1-3\n");
 			 }
 			 if (choice == 1) {
-				 LoadFromFile(dataArr);
 				 std::cout << "Displaying existing characters...\n";
 				 Sleep(1500);
 				 system("cls");
@@ -446,6 +444,9 @@ Weapon& Weapon::operator--() {
 				 system("cls");
 				 PrintWeapons(dataArr);
 				 mainScreen();
+			 }
+			 if (choice == 3) {
+				 return;
 			 }
 		 }
 		 catch (std::invalid_argument& ex) {
@@ -557,6 +558,7 @@ void wCreationMode() {
 
 
 int main() {
+	LoadFromFile(dataArr);
 	authScreen();
 		return 0;
 }
